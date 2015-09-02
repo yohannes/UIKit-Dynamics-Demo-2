@@ -15,8 +15,13 @@ class ViewController: UIViewController {
     
     let greenBoxSize = CGSizeMake(100.0, 100.0)
     var greenBoxView: UIView!
+    
     var dynamicAnimator: UIDynamicAnimator!
+    
     var collisionBehavior: UICollisionBehavior!
+    var pushBehavior: UIPushBehavior!
+    
+    var tapGestureRecognizer: UITapGestureRecognizer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +29,7 @@ class ViewController: UIViewController {
         // MARK: Box
         self.greenBoxView = UIView(frame: CGRectMake(CGRectGetMidX(self.view.bounds) - (self.greenBoxSize.width / 2), CGRectGetMidY(self.view.bounds) - (self.greenBoxSize.height / 2), self.greenBoxSize.width, self.greenBoxSize.height))
         self.greenBoxView.backgroundColor = UIColor.greenColor()
-        self.greenBoxView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI / 8))
+        self.greenBoxView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI / 8)) // rotate by 45 deg.
         
         self.view.addSubview(self.greenBoxView)
         
@@ -36,6 +41,24 @@ class ViewController: UIViewController {
         self.collisionBehavior.translatesReferenceBoundsIntoBoundary = true
         
         self.dynamicAnimator.addBehavior(self.collisionBehavior)
+        
+        // MARK: Push
+        self.pushBehavior = UIPushBehavior(items: [self.greenBoxView], mode: UIPushBehaviorMode.Instantaneous)
+        self.pushBehavior.setAngle(CGFloat(M_PI / -2), magnitude: 10)
+        
+        self.dynamicAnimator.addBehavior(self.pushBehavior)
+        
+        // MARK: Gesture Recognizer
+        self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onTap:")
+        self.greenBoxView.addGestureRecognizer(self.tapGestureRecognizer)
+    }
+    
+    // MARK: - Custom Methods
+    
+    func onTap(tap: UITapGestureRecognizer) {
+        self.pushBehavior.active = false
+        self.pushBehavior.setAngle(CGFloat(M_PI / -2), magnitude: 10)
+        self.pushBehavior.active = true
     }
 
     override func didReceiveMemoryWarning() {
