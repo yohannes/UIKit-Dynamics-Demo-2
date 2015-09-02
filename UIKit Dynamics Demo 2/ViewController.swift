@@ -20,9 +20,11 @@ class ViewController: UIViewController {
     
     var collisionBehavior: UICollisionBehavior!
     var pushBehavior: UIPushBehavior!
+    var snapBehavior: UISnapBehavior!
     
     var tapGestureRecognizer: UITapGestureRecognizer!
-
+    var panGestureRecognizer: UIPanGestureRecognizer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,21 +38,27 @@ class ViewController: UIViewController {
         // MARK: Animation
         self.dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
         
-        // MARK: Collision
+        // MARK: Collision behavior
         self.collisionBehavior = UICollisionBehavior(items: [self.greenBoxView])
         self.collisionBehavior.translatesReferenceBoundsIntoBoundary = true
         
         self.dynamicAnimator.addBehavior(self.collisionBehavior)
         
-        // MARK: Push
+        // MARK: Push behavior
         self.pushBehavior = UIPushBehavior(items: [self.greenBoxView], mode: UIPushBehaviorMode.Instantaneous)
         self.pushBehavior.setAngle(CGFloat(M_PI / -2), magnitude: 10)
         
         self.dynamicAnimator.addBehavior(self.pushBehavior)
         
+        // MARK: Snap behavior
+        self.snapBehavior = UISnapBehavior(item: self.greenBoxView, snapToPoint: CGPointMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds)))
+        
         // MARK: Gesture Recognizer
         self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onTap:")
         self.greenBoxView.addGestureRecognizer(self.tapGestureRecognizer)
+        
+        self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "onPan:")
+        self.greenBoxView.addGestureRecognizer(self.panGestureRecognizer)
     }
     
     // MARK: - Custom Methods
@@ -59,6 +67,18 @@ class ViewController: UIViewController {
         self.pushBehavior.active = false
         self.pushBehavior.setAngle(CGFloat(M_PI / -2), magnitude: 10)
         self.pushBehavior.active = true
+        self.dynamicAnimator.addBehavior(self.pushBehavior)
+    }
+    
+    func onPan(pan: UIPanGestureRecognizer) {
+        self.dynamicAnimator.removeAllBehaviors()
+        
+        switch pan.state {
+            case UIGestureRecognizerState.Began: self.greenBoxView.center = pan.locationOfTouch(0, inView: self.view)
+            case UIGestureRecognizerState.Changed: self.greenBoxView.center = pan.locationOfTouch(0, inView: self.view)
+            case UIGestureRecognizerState.Ended: self.dynamicAnimator.addBehavior(self.snapBehavior)
+            default: return
+        }
     }
 
     override func didReceiveMemoryWarning() {
