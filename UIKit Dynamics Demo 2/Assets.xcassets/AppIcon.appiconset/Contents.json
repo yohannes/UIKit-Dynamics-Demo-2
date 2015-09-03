@@ -23,7 +23,7 @@
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Application Shield-100.png",
+      "filename" : "icon01.png",
       "scale" : "2x"
     },
     {
@@ -52,13 +52,15 @@
       "scale" : "2x"
     },
     {
-      "idiom" : "ipad",
       "size" : "76x76",
+      "idiom" : "ipad",
+      "filename" : "icon01-1.png",
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "76x76",
+      "idiom" : "ipad",
+      "filename" : "icon01-2.png",
       "scale" : "2x"
     }
   ],
